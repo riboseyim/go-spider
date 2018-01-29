@@ -7,7 +7,6 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/celrenheit/spider"
-	uuid "github.com/satori/go.uuid"
 )
 
 type GMOF_CaiPiao_Month_HTMLSpider struct {
@@ -23,12 +22,10 @@ func NewGMOF_CaiPiao_Month_HTMLSpider() *GMOF_CaiPiao_Month_HTMLSpider {
 }
 
 func (w *GMOF_CaiPiao_Month_HTMLSpider) Setup(ctx *spider.Context) (*spider.Context, error) {
-	log.Printf("w.url:%s", w.url)
 	return spider.NewHTTPContext("GET", w.url, nil)
 }
 
 func (w *GMOF_CaiPiao_Month_HTMLSpider) Spin(ctx *spider.Context) error {
-	log.Printf("---------GMOF_CaiPiao_HTMLSpider Spin()----------")
 	if _, err := ctx.DoRequest(); err != nil {
 		return err
 	}
@@ -72,8 +69,8 @@ func (w *GMOF_CaiPiao_Month_HTMLSpider) Spin(ctx *spider.Context) error {
 		caipiao.Attachid = href
 	})
 
-	log.Printf("---------GMOF_CaiPiao_HTMLSpider 201204之前的样式----------")
 	if caipiao.Total == "0" {
+		log.Printf("---------GMOF_CaiPiao_HTMLSpider 201204之前的样式----------")
 		//class="TRS_Editor"
 		content := html.Find(".Custom_UnionStyle").Text()
 
@@ -99,28 +96,10 @@ func (w *GMOF_CaiPiao_Month_HTMLSpider) Spin(ctx *spider.Context) error {
 				}
 			}
 		}
-
 	}
-
+	log.Println("GMOF_CaiPiao_HTMLSpider match caipiao.Total:%s", caipiao.Total)
 	log.Printf("---------GMOF_CaiPiao_HTMLSpider Find() Finish----------")
 
-	event := new(GMOF_CaiPiao_Month)
-	event.AccId = uuid.NewV4().String()
-	event.Type = "Add_GMOF_CaiPiao_Month"
-	event.Title = caipiao.Title
-	event.Total = caipiao.Total
-	event.LP = "0"
-	event.Attachid = caipiao.Attachid
-	//event.Content = caipiao.Content
-
-	kafka := newKafkaSyncProducer()
-	sendMsg(kafka, topic_ttank_gmof_caipiao_month, event)
-
-	//========
-	csvdata := [][]string{
-		{event.Title, event.Total},
-	}
-	save_csv("./data/Data_GMOF_CaiPiao_Month2.csv", csvdata, true)
-
+	saveData_GMOF_CaiPiao_Month(caipiao)
 	return err
 }

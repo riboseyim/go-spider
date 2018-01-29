@@ -22,12 +22,10 @@ func NewGMOF_CaiPiao_List_HTMLSpider() *GMOF_CaiPiao_List_HTMLSpider {
 }
 
 func (w *GMOF_CaiPiao_List_HTMLSpider) Setup(ctx *spider.Context) (*spider.Context, error) {
-	log.Printf("w.url:%s", w.url)
 	return spider.NewHTTPContext("GET", w.url, nil)
 }
 
 func (w *GMOF_CaiPiao_List_HTMLSpider) Spin(ctx *spider.Context) error {
-	log.Printf("---------GMOF_CaiPiao_HTMLSpider Spin()----------")
 	if _, err := ctx.DoRequest(); err != nil {
 		return err
 	}
@@ -59,15 +57,10 @@ func (w *GMOF_CaiPiao_List_HTMLSpider) Spin(ctx *spider.Context) error {
 			event.Url = list.Url
 
 			//=======kafka
-			kafka := newKafkaSyncProducer()
-			sendMsg(kafka, topic_ttank_gmof_caipiao_list, event)
+			//kafka := newKafkaSyncProducer()
+			//sendMsg(kafka, topic_ttank_gmof_caipiao_list, event)
 
-			//========
-			csvdata := [][]string{
-				{event.AccId, event.Title, event.Type, event.Url},
-			}
-			save_csv("./data/Data_GMOF_CaiPiao_List2.csv", csvdata, true)
-
+			saveData_GMOF_CaiPiao_List(event)
 		}
 	})
 

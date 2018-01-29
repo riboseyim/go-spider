@@ -1,6 +1,11 @@
 package main
 
-import "log"
+import (
+	"fmt"
+	"log"
+
+	uuid "github.com/satori/go.uuid"
+)
 
 /*
 1.2017-02 无数据
@@ -40,24 +45,18 @@ func NewGMOF_CaiPiao_Month() *GMOF_CaiPiao_Month {
 	}
 }
 
-func saveData_GMOF_CaiPiao_Month(Id string, Title string, Total string, SPLY string, LP string, Url string, Attachid string, tt map[string]interface{}) {
-	log.Println("======saveData_GMOF_CaiPiao_Month()===========")
-	log.Println("======total:" + Total)
+func saveData_GMOF_CaiPiao_Month(caipiao *GMOF_CaiPiao_Month) {
+	id := uuid.NewV4().String()
+	itemcode := "GMOF_CaiPiao_Month"
 
-	csvdata := [][]string{
-		{Id, Title, Total, SPLY, LP, Url, Attachid},
-	}
-	save_csv("./data/Data_GMOF_CaiPiao_Month.csv", csvdata, true)
+	db, err := initPGConn()
+	stmt, err := db.Prepare("insert into data_source_raw(id,itemcode,title,rawvalue,status)  VALUES($1,$2,$3,$4,$5) RETURNING id")
+	checkDBErr(err)
+	res, err := stmt.Exec(id, itemcode, caipiao.Title, caipiao.Total, "C")
+	checkDBErr(err)
+	affect, err := res.RowsAffected()
+	fmt.Println("res affected:%s", affect)
+	checkDBErr(err)
+	db.Close()
+
 }
-
-/*
-func updateAccount(id string, data map[string]interface{}) (*BankAccount, error) {
-	cmd := Redis.HMSet(id, data)
-
-	if err := cmd.Err(); err != nil {
-		return nil, err
-	} else {
-		return FetchAccount(id)
-	}
-}
-*/

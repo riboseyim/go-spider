@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func read_csv(filename string, sep string) []string {
+func read_csv_caipiao(filename string, sep string) []string {
 	fmt.Printf("Input file name :%s \n", filename)
 	cntb, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -26,10 +26,37 @@ func read_csv(filename string, sep string) []string {
 	return data
 }
 
+func read_csv_normal(filename string) []string {
+	fmt.Printf("Input file name :%s \n", filename)
+	cntb, err := ioutil.ReadFile(filename)
+	if err != nil {
+		panic(err)
+	}
+	r2 := csv.NewReader(strings.NewReader(string(cntb)))
+	ss, _ := r2.ReadAll()
+	//fmt.Println(ss)
+	sz := len(ss)
+	data := make([]string, sz)
+	for i := 0; i < sz; i++ {
+		for j := 0; j < len(ss[i]); j++ {
+			fmt.Println(ss[i][j])
+			data[i] = ss[i][j]
+		}
+
+	}
+	return data
+}
+
+func clear_csv(filename string) {
+
+	os.Remove(filename)
+
+}
+
 func save_csv(filename string, data [][]string, append bool) {
 
 	if !append {
-		//os.Remove(filename)
+		os.Remove(filename)
 	}
 
 	f, err := os.OpenFile(filename, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600) //创建文件

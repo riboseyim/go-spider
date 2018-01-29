@@ -1,0 +1,7 @@
+Welcome to [ TianGuan System -1.0-release-201801 ] Author:@RiboseYim ] 
+Module:Economist 
+
+-act:producer 
+-task:build-echarts 
+-envflag:1 
+Input file name :./data-all.dat 

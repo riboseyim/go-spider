@@ -15,11 +15,12 @@ func NewGMOF_CaiPiao_List() *GMOF_CaiPiao_List {
 	}
 }
 
-func saveData_GMOF_CaiPiao_List(Id string, Title string, Type string, Url string, tt map[string]interface{}) {
+func saveData_GMOF_CaiPiao_List(event *GMOF_CaiPiao_List) {
 
 	csvdata := [][]string{
-		{Id, Title, Type, Url},
+		{event.AccId, event.Title, event.Type, event.Url},
 	}
+
 	save_csv("./data/Data_GMOF_CaiPiao_List.csv", csvdata, true)
 
 }
