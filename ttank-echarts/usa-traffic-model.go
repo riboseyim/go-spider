@@ -13,6 +13,7 @@ type Echarts_HTML_Obj struct {
 	TemplateName string
 	TemplateFile string
 	Target       string
+	DataSize     int
 	TopIndex     int
 }
 
